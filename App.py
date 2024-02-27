@@ -66,11 +66,31 @@ class App:
         collection = db['logins']
         collection.find_one_and_update(search, update)
 
+
     def delete_login(self, search):
         db = self.client['psmanager']
         collection = db['logins']
         collection.find_one_and_delete(search)
 
 
-    def csv_to_dict(self):
-        pass
+    def csv_to_dict(self, file_path):
+        result_dict = {}
+        dict_list = []
+        try:
+            with open(file_path, 'r') as file:
+                reader = csv.DictReader(file)
+                headers = reader.fieldnames        
+                for row in reader:
+                    # Adjust the headers index according to your actual csv headers.    
+                    d = {
+                        'service': row[headers[3]],
+                        'login': row[headers[0]],
+                        'password': row[headers[4]]
+                    }
+                    dict_list.append(d)
+            
+            for d in dict_list:
+                self.create_login(service=d['service'], login=d['login'], password=d['password'])
+            return True, len(dict_list)
+        except Exception as e:
+            return False, e

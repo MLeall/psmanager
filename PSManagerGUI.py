@@ -21,6 +21,7 @@ class PSManagerGUI:
         tk.Button(button_frame, text="New login", font=('Helvetica', 10) , width=25, command=self.login_popup).pack(side=tk.LEFT, padx=25)
         tk.Button(button_frame, text="Update login", font=('Helvetica', 10), width=25, command=self.update_popup).pack(side=tk.LEFT, padx=25)
         tk.Button(button_frame, text="Delete login", font=('Helvetica', 10), width=25, command=self.delete_popup).pack(side=tk.LEFT, padx=25)
+        tk.Button(button_frame, text="Import CSV", font=('Helvetica', 10), width=25, command=self.import_popup).pack(side=tk.LEFT, padx=25)
 
         self.tree_container = tk.Frame(master, bg='white', highlightthickness=1, highlightbackground='black')
         self.tree_container.pack(fill=tk.BOTH, expand='yes', padx=20, pady=20)
@@ -323,3 +324,39 @@ class PSManagerGUI:
 
         tk.Button(popup_window, text="Delete", command=delete_login, font=('Helvetica', 11), width=13).pack(side=tk.LEFT, padx=16, pady=(0, 0))
         tk.Button(popup_window, text="Cancel", command=popup_window.destroy, font=('Helvetica', 11), width=13).pack(side=tk.RIGHT, padx=16, pady=(0, 0))
+
+
+    def import_popup(self):
+        def import_csv():
+            path = path_var.get()
+            check = self.app.csv_to_dict(path)
+            if check[0]:
+                ok_window = tk.Toplevel(self.master)
+                ok_window.title("Done")
+                ok_window.geometry("250x100")
+                ok_window.transient(self.master)
+
+                tk.Label(ok_window, text=f"Import done.\n{check[1]} imports made", font=('Helvetica', 12)).pack(pady=10)
+                tk.Button(ok_window, text="OK", command=ok_window.destroy, font=('Helvetica', 11), width=8).pack(anchor='center', pady=8)
+            else:
+                messagebox.showwarning("Error", {check[1]})
+                popup_window.destroy()
+            self.tree.destroy()
+            self.show_logins()
+            popup_window.destroy()
+
+        popup_window = tk.Toplevel(self.master)
+        popup_window.title("Import credentials")
+        popup_window.geometry("400x200")
+        popup_window.transient(self.master)
+
+        path_var = tk.StringVar()
+
+        tk.Label(popup_window, text="Insert credentials file path", font=('Helvetica', 13)).pack(pady=15)
+
+        tk.Label(popup_window, text="File path:", font=('Helvetica', 12)).pack(pady=5, anchor=tk.W, padx=15)
+        entry_password = tk.Entry(popup_window, textvariable=path_var, font=('Helvetica', 11), width=45, bg='white')
+        entry_password.pack(pady=5)
+
+        tk.Button(popup_window, text="Import", command=import_csv, font=('Helvetica', 11), width=13).pack(anchor='center', pady=30)
+
