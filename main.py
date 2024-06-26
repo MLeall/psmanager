@@ -7,4 +7,4 @@ def main(user, password, cluster_name):
     root.mainloop()
 
 if __name__ == '__main__':
-    main('mll', 'rf5rsOjFOq9OK6AZ', 'psmcluster')
+    main('user', 'password', 'cluster_name')
